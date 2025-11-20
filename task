@@ -1,0 +1,137 @@
+
+
+import java.util.Random;
+import java.util.Scanner;
+
+public class NumericGridHighlighter {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Random random = new Random();
+
+        int n = readGridSize(sc);          // Step 1: get N
+        int[][] grid = new int[n][n];
+
+        // Step 2: fill grid with random even numbers from 2 to 20
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                // random.nextInt(10) gives 0–9  →  2 + 2*k = 2,4,...,20
+                grid[i][j] = 2 + 2 * random.nextInt(10);
+            }
+        }
+
+        System.out.println();
+        System.out.println("Generated 2D array:");
+        printGrid(grid, -1);              // -1 means: do not highlight anything yet
+
+        // Step 3: ask user for number to highlight
+        int x = readHighlightNumber(sc);
+
+        System.out.println();
+        System.out.println("Array with " + x + " highlighted:");
+        int count = printGrid(grid, x);   // highlight x and get count of x
+        System.out.println();
+        System.out.println("Number " + x + " appeared " + count + " time(s)");
+
+        sc.close();
+    }
+
+    // ---------- helper methods ----------
+
+    // Read N safely (handle foo, negative, zero, etc.)
+    private static int readGridSize(Scanner sc) {
+        int n;
+        while (true) {
+            System.out.print("Enter array size (for NxN array): ");
+            if (!sc.hasNextInt()) {
+                System.out.println("Invalid input. Please enter a whole number.");
+                sc.next(); // throw away wrong token like "foo"
+                continue;
+            }
+            n = sc.nextInt();
+            if (n <= 0) {
+                System.out.println("Size must be a positive number.");
+            } else {
+                break;
+            }
+        }
+        return n;
+    }
+
+    // Read highlight number X (even, 2–20)
+    private static int readHighlightNumber(Scanner sc) {
+        int x;
+        while (true) {
+            System.out.print("Enter a number to highlight (even number 2–20): ");
+            if (!sc.hasNextInt()) {
+                System.out.println("Invalid input. Please enter a number.");
+                sc.next();
+                continue;
+            }
+            x = sc.nextInt();
+            if (x < 2 || x > 20 || x % 2 != 0) {
+                System.out.println("Number must be EVEN and between 2 and 20.");
+            } else {
+                break;
+            }
+        }
+        return x;
+    }
+
+    /**
+     * Prints the grid in the required format.
+     * If highlightVal == -1 → no highlight.
+     * Otherwise cells equal to highlightVal are shown as [10], [ 8], etc.
+     * Returns how many times highlightVal appears.
+     */
+    private static int printGrid(int[][] grid, int highlightVal) {
+        int n = grid.length;
+        int count = 0;
+
+        // print column headers
+        System.out.print("   "); // space for row labels
+        for (int j = 0; j < n; j++) {
+            System.out.printf(" %02d ", j);
+        }
+        System.out.println();
+
+        // top border
+        printBorderLine(n);
+
+        // each row
+        for (int i = 0; i < n; i++) {
+            System.out.printf("%02d ", i);   // row index
+            System.out.print("|");
+            for (int j = 0; j < n; j++) {
+                int val = grid[i][j];
+                if (val == highlightVal) {
+                    // highlight cell and increase count
+                    System.out.printf("[%2d]|", val);
+                    count++;
+                } else {
+                    // normal cell
+                    System.out.printf(" %2d |", val);
+                }
+            }
+            System.out.println();
+            printBorderLine(n);
+        }
+        return count;
+    }
+
+    // Draw a border line like +----+----+...
+    private static void printBorderLine(int n) {
+        System.out.print("   "); // aligns with row labels
+        for (int j = 0; j < n; j++) {
+            System.out.print("+---");
+        }
+        System.out.println("+");
+    }
+}
+
+
+
+
+
+
+You can copy this file as NumericGridHighlighter.java, compile it with javac NumericGridHighlighter.java and run using java NumericGridHighlighter. It will behave like the examples in your screenshots.
